@@ -1,0 +1,25 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "@vue/standard",
+    "plugin:vue/recommended"
+    // "plugin:vue/essential",
+    // "plugin:vue/vue3-recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "vue"
+   ],
+  "rules": {
+    "vue/max-attributes-per-line": "off",
+    "vue/no-v-html": "off",
+    "vue/singleline-html-element-content-newline": "off"
+  }
+}

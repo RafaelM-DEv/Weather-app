@@ -1,0 +1,35 @@
+{
+  "version":"0.0.0",
+
+  "scripts": {
+    "dev":"vite",
+    "build":"vite build",
+    "serve":"vite preview",
+    "lint":"npx eslint --ext .js,.vue src",
+    "deploy":"push-dir --dir=dist --branch=gh-pages --cleanup"
+  },
+
+  "dependencies": {
+    "axios":"^0.21.1",
+    "cors":"^2.8.5",
+    "push-dir":"^0.4.1",
+    "sass":"^1.35.1",
+    "vue":"^3.0.5",
+    "vue-router":"^4.0.10",
+    "vuex":"^4.0.2"
+  },
+
+  "devDependencies": {
+    "@vitejs/plugin-vue":"^1.2.3",
+    "@vue/compiler-sfc":"^3.0.5",
+    "@vue/eslint-config-standard":"^4.0.0",
+    "autoprefixer":"^10.2.6",
+    "babel-eslint":"^10.0.1",
+    "eslint":"^7.29.0",
+    "eslint-loader":"^4.0.2",
+    "eslint-plugin-vue":"^7.12.1",
+    "postcss":"^8.3.5",
+    "tailwindcss":"^2.2.4",
+    "vite":"^2.3.8"
+  }
+}
