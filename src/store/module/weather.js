@@ -13,44 +13,43 @@ const getters = {
 }
 
 const actions = {
-  async GET_WEATHER ({ commit }, id) {
-    if (localStorage.getItem('WEATHER_DATA')) {
-      const data = JSON.parse(localStorage.getItem('WEATHER_DATA'))
+  async getWeather ({ commit }, id) {
+    if (localStorage.getItem('weatherData')) {
+      const data = JSON.parse(localStorage.getItem('weatherData'))
 
-      commit('SET_WEATHER', data)
+      commit('setWeather', data)
     } else {
       const response = await axios.get(`api/location/${id}/`)
       const parsed = JSON.stringify(response.data)
 
-      localStorage.setItem('WEATHER_DATA', parsed)
-      commit('SET_WEATHER', response.data)
+      localStorage.setItem('weatherData', parsed)
+      commit('setWeather', response.data)
     }
   },
 
-  async GET_REFRESH ({ commit }, id) {
+  async getRefresh ({ commit }, id) {
     const response = await axios.get(`api/location/${id}/`)
     const parsed = JSON.stringify(response.data)
 
-    localStorage.setItem('WEATHER_DATA', parsed)
-    commit('SET_WEATHER', response.data)
+    localStorage.setItem('weatherData', parsed)
+    commit('setWeather', response.data)
   },
 
-  async GET_LOCATION ({ commit }, query) {
+  async getLocation ({ commit }, query) {
     const response = await axios.get(`/api/location/search/?query=${query}`)
     const parsed = JSON.stringify(response.data)
 
-    localStorage.setItem('LOCATION_DATA', parsed)
-    commit('SET_LOCATIONS', response.data)
+    localStorage.setItem('locationData', parsed)
+    commit('setLocations', response.data)
   }
-
 }
 
 const mutations = {
-  SET_WEATHER (state, payload) {
+  setWeather (state, payload) {
     state.weather = payload
   },
 
-  SET_LOCATIONS (state, payload) {
+  setLocations (state, payload) {
     state.locations = payload
   }
 }

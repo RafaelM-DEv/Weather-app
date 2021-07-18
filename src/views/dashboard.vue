@@ -1,32 +1,38 @@
 <template>
-  <div class="dashboard flex text-white">
-    <div class=" w-[459px] h-screen mr-1 bg-blue-900">
-      <weather-today class="w-full h-full" :item="getWeather('today')" :location="getLocation()" @query="fetchSearch" @fetchCity="fetchCity" />
+  <div class="dashboard lg:flex text-white bg-primary">
+    <div class="w-full h-screen lg:w-[459px] mr-1 bg-blue-900">
+      <weather-today class="h-screen lg:w-[400px]" :item="getWeatherToday()" :location="getLocationTitle()"
+                     :unit-fahrenheit="fahrenheit" @query="fetchSearch" @fetchCity="fetchCity"
+      />
     </div>
-    <div class="w-full">
-      <div class="flex justify-end items-center mr-16 mt-2 space-x-2 text-white">
+    <div class="w-screen lg:mt-2 mt-10">
+      <div class="flex flex-wrap justify-center sm:justify-end sm:mr-10 items-center mt-2 space-x-2 text-white">
         <div class="text-gray-500">Atualizado em: {{ formatDate(weather.time, 'en-US', 'time') }}</div>
-        <button class="dashboard__celsius flex flex-nowrap font-bold" @click="refresh()">
-          <img src="../assets/refresh.svg" alt="">
-          <div>Refresh</div>
-        </button>
-        <button class="dashboard__celsius font-bold">°C</button>
-        <button class="dashboard__fahrenheit font-bold">°F</button>
-      </div>
-      <div class=" flex flex-wrap justify-center w-full mt-3">
-        <div v-for="(item, index) in getWeather()" :key="index" class="mt-3 mr-3">
-          <weather-card use-temp class="dashboard__card-hover w-32 h-40" :item="item" />
+        <div class="flex flex-nowrap space-x-3">
+          <button class="flex flex-nowrap font-bold rounded-full py-1 px-2 bg-gray-500" @click="refresh()">
+            <img src="../assets/refresh.svg" alt="refresh_icon">
+            <div>Refresh</div>
+          </button>
+          <button id="celsius" class="active font-bold rounded-full py-1 px-2 bg-gray-500 hover:bg-[#1E213A]" @click="setUnitCelsius">°C</button>
+          <button id="fahrenheit" class="font-bold rounded-full py-1 px-2 bg-gray-500 hover:bg-[#1E213A]" @click="setUnitFahrenheit">°F</button>
         </div>
       </div>
-      <div class="flex flex-wrap justify-center w-full mt-12">
-        <div class="mr-3">
-          <div class="text-white font-extrabold text-2xl">Today's Hightlights</div>
-          <weather-card use-wind class="w-80 h-32 mt-6" :item="getWeather('today')" />
-          <weather-card use-air-pressure class="w-80 mt-3" :item="getWeather('today')" />
+
+      <div class="flex flex-wrap justify-center w-full mt-3 pl-2">
+        <div v-for="(item, index) in dataWeather" :key="index" class="mt-3 mr-3">
+          <weather-card use-temp class="dashboard__weather-card w-32 h-40 rounded-sm" :item="item" :unit-fahrenheit="fahrenheit" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center w-full mt-12 pb-10">
+        <div class="sm:mr-3">
+          <div class="font-extrabold text-2xl text-white">Today's Hightlights</div>
+          <weather-card use-wind class="w-64 lg:w-72 h-32 mt-6" :item="getWeatherToday()" />
+          <weather-card use-air-pressure class="w-64 lg:w-72 mt-3" :item="getWeatherToday()" />
         </div>
         <div class="mt-14">
-          <weather-card use-humidity class="w-80 h-32" :item="getWeather('today')" />
-          <weather-card use-visibility class="w-80 mt-3" :item="getWeather('today')" />
+          <weather-card use-humidity class="w-64 lg:w-72 h-32" :item="getWeatherToday()" />
+          <weather-card use-visibility class="w-64 lg:w-72 mt-3" :item="getWeatherToday()" />
         </div>
       </div>
     </div>
@@ -46,7 +52,10 @@ export default {
   },
 
   data () {
-    return {}
+    return {
+      fahrenheit: true,
+      dataWeather: []
+    }
   },
 
   computed: {
@@ -54,41 +63,56 @@ export default {
   },
 
   created () {
-    this.GET_WEATHER('455827')
+    this.getWeather('455827')
+  },
+
+  mounted () {
+    this.setWeather()
   },
 
   methods: {
     ...mapActions([
-      'GET_WEATHER',
-      'GET_REFRESH',
-      'GET_LOCATION'
+      'getWeather',
+      'getRefresh',
+      'getLocation'
     ]),
 
     formatDate,
 
-    getWeather (mode) {
-      if (mode === 'today') {
-        return this.weather.consolidated_weather[0]
-      }
-      const dashboardData = this.weather.consolidated_weather.splice(1, 5)
-      return dashboardData
+    setWeather () {
+      this.dataWeather = this.weather.consolidated_weather.splice(1, 5)
     },
 
-    getLocation () {
+    getWeatherToday () {
+      return this.weather.consolidated_weather[0]
+    },
+
+    getLocationTitle () {
       return this.weather.title
     },
 
     refresh () {
-      this.GET_REFRESH(this.weather.woeid)
+      this.getRefresh(this.weather.woeid)
     },
 
     fetchSearch (searchLocation) {
-      this.GET_LOCATION(searchLocation)
+      this.getLocation(searchLocation)
     },
 
     fetchCity (model) {
-      console.log(model, 'dashboard data')
-      this.GET_REFRESH(model)
+      this.getRefresh(model)
+    },
+
+    setUnitCelsius () {
+      document.querySelector('#celsius').classList.add('active')
+      document.querySelector('#fahrenheit').classList.remove('active')
+      this.fahrenheit = true
+    },
+
+    setUnitFahrenheit () {
+      document.querySelector('#fahrenheit').classList.add('active')
+      document.querySelector('#celsius').classList.remove('active')
+      this.fahrenheit = false
     }
   }
 }
@@ -96,40 +120,21 @@ export default {
 
 <style lang="scss">
 .dashboard {
-
-  &__celsius {
-    background-color: grey;
-    padding: 6px 9px 4px 9px;
-    border-radius: 2rem;
-    &:hover {
-      background-color: #1E213A;
-    }
-  }
-
-  &__fahrenheit {
-    background-color: grey;
-    padding: 6px 9px 4px 9px;
-    border-radius: 2rem;
-    &:hover {
-      background-color: #1E213A;
-    }
-  }
-
-  &__card-hover {
+  &__weather-card {
     transform: scale(1);
     transition-duration: 1s;
-    border: 1px;
-    border-color: #1E213A;
-    border-style: solid;
+    border: 1px solid #1E213A;
 
     &:hover {
       transform: scale(1.1);
       transition-duration: 1s;
-      border: 1px;
-      border-color: white;
-      border-style: solid;
+      border: 1px solid white;
     }
   }
 }
 
+.active {
+  border: 1px solid white;
+  background-color: #1E213A;
+}
 </style>
